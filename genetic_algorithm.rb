@@ -27,12 +27,21 @@ end
 
 # Take two strings, and breed them to create two new solutions
 def breed(solution_one, solution_two)
-
+	# We choose a pivot point, splice the two solutions and rejoin them to the corresponding
+	# side of the other solution
+	pivot = solution_one.length * rand
+	new_solution_one = solution_one(0...pivot).join solution_two(pivot..-1)
+	new_solution_two = solution_two(0...pivot).join solution_ont(pivot..-1)
+	
+	new_solution_one, new_soultion_two
 
 end
 
-#We evaluate scores based on number of vowels
+#We evaluate scores based on number of vowels, and return a score (high score is betetr)
 def evaluation (solution)
-
+	#Extract vowels
+	vowels = solution.scan( /[aeiou]/)
+	#Count the number of vowels
+	vowels.length
 end
 
