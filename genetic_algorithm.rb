@@ -45,3 +45,12 @@ def evaluation (solution)
 	vowels.length
 end
 
+def start
+	initializtion
+	# Number of generations
+	1000.times do
+		#choose breeders
+		#develop new 
+	end
+end
+
