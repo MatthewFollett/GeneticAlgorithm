@@ -1,6 +1,6 @@
 @@POPULATION_SIZE = 100
 @@GENETIC_SIZE = 100
-@@GENERATIONS = 1000
+@@GENERATIONS = 150000
 
 @@MUTAION_SOLUTION_CHANCE = 0.05 # chance a solution can mutate
 @@MUTATION_GENETIC_CHANCE = 0.10 # chance that a gene in a solution can mutate
@@ -24,6 +24,23 @@ def mutation!(solution)
 			solution[index] = ('a'..'z').to_a[rand(26)]
 		end
 	end
+end
+
+# For tournament selection, we're going to choose 8 random solutions and return the best one
+
+@@TORUNAMENT_SIZE = 8
+def tournament_selection (population_pool)
+	best_score = -1
+	best_solution = nil
+	@@TORUNAMENT_SIZE.times do
+		solution = population_pool[population_pool.length * rand]
+		score = evaluation solution
+		if(score > best_score)
+			best_score = score
+			best_solution = solution
+		end
+	end
+	best_solution
 end
 
 # Take two strings, and breed them to create two new solutions
@@ -51,18 +68,16 @@ def start
 	@best_solution = nil
 	@best_solution_score = -1
 	# Number of generations
-	@@GENERATIONS.times do
+	#@@GENERATIONS.times do | generation |
+	generation = 0
+	while @best_solution_score != 100
+		generation+=1
 		local_best_solution = nil
 		local_best_solution_score = -1
 	
-		#select breeders
 		breeding_pool = Array.new
 		#establish the breeding pool, weighted to allow higher performing solutions to be more likely to be picked.
 		@population.each do |solution|
-			score = evaluation solution
-			score.times do
-				breeding_pool.push solution
-			end
 			# See if we have a new local best solution
 			if(local_best_solution_score < score)
 				local_best_solution_score = score
@@ -74,7 +89,7 @@ def start
 		if(local_best_solution_score > @best_solution_score)
 			@best_solution_score = local_best_solution_score
 			@best_solution = local_best_solution
-		end
+		end	
 		
 		# The above will be very memory intensive near the end
 		# (the above array could be POPULATION_SIZE * GENETIC_SIZE, if all solutions are optimal)
@@ -84,14 +99,14 @@ def start
 		new_population = Array.new
 		#each breed will generate 2 solutions, so we need to do it for half the population size
 		(@@POPULATION_SIZE/2).times do
-			breed_1 = breeding_pool[breeding_pool.length * rand ]
+			#breed_1 = breeding_pool[breeding_pool.length * rand ]
+			breed_1 = tournament_selection @population
 			breed_2 = breed_1
 			
 			#This loop will ensure that the two breeders are not the same solution
 			while breed_1 == breed_2
-				breed_2 = breeding_pool[breeding_pool.length * rand ]
+				breed_2 = tournament_selection @population
 			end
-			
 			new_1, new_2 = breed(breed_1, breed_2)
 			new_population.push(new_1)
 			new_population.push(new_2)
@@ -104,11 +119,16 @@ def start
 			end
 		end
 		
+				
+		# We're also going to keep the best performing solution in the population, to make sure the
+		# population is progressing towards a better solution
+		new_population[-1] = @best_solution
+		
 		#work is done - replace the old pool with the new one for the next generation
 		@population = new_population
 		
 		#Print best performing solution this generation
-		puts "Best Performing solution: #{local_best_solution_score}"
+		puts "#{generation}. Best Performing solution: #{local_best_solution_score}"
 		#puts "#{local_best_solution}"
 		#puts "Best Performing solution: #{@best_solution_score}"
 	end
