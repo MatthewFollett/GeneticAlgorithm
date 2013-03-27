@@ -18,4 +18,5 @@ Historical Information:
 Best Solution Times:
 
 March 26, 2013 - 1,490,121 generations (100 pool size)
+
 March 27, 2013 (with tournament selection) - 17,735 generations (100 pool size)

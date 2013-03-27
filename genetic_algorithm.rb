@@ -77,8 +77,11 @@ def start
 	
 		breeding_pool = Array.new
 		#establish the breeding pool, weighted to allow higher performing solutions to be more likely to be picked.
+		sum = 0
 		@population.each do |solution|
 			# See if we have a new local best solution
+			score = evaluation solution
+			sum = sum + score
 			if(local_best_solution_score < score)
 				local_best_solution_score = score
 				local_best_solution = solution
@@ -128,7 +131,7 @@ def start
 		@population = new_population
 		
 		#Print best performing solution this generation
-		puts "#{generation}. Best Performing solution: #{local_best_solution_score}"
+		puts "#{generation}. Best Performing solution: #{local_best_solution_score} (Average: #{sum / @@POPULATION_SIZE})"
 		#puts "#{local_best_solution}"
 		#puts "Best Performing solution: #{@best_solution_score}"
 	end
