@@ -1,4 +1,4 @@
-Genetic Algorithm
+= Genetic Algorithm
 
 This is an implementation of a Genetic Algorithm using Ruby. The problem it is solving is finding a String with the most amount of vowels.
 
@@ -20,3 +20,5 @@ Best Solution Times:
 March 26, 2013 - 1,490,121 generations (100 pool size)
 
 March 27, 2013 (with tournament selection) - 17,735 generations (100 pool size)
+
+March 28, 2013 (with two-point crossover) - 142 generations (100 pool size)

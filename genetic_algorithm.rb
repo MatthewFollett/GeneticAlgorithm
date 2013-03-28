@@ -1,9 +1,9 @@
 @@POPULATION_SIZE = 100
-@@GENETIC_SIZE = 100
-@@GENERATIONS = 150000
+@@GENETIC_SIZE = 1000
+@@GENERATIONS = 15000
 
-@@MUTAION_SOLUTION_CHANCE = 0.05 # chance a solution can mutate
-@@MUTATION_GENETIC_CHANCE = 0.10 # chance that a gene in a solution can mutate
+@@MUTAION_SOLUTION_CHANCE = 0.01 # chance a solution can mutate
+@@MUTATION_GENETIC_CHANCE = 0.05 # chance that a gene in a solution can mutate
 
 # Generate the initial random population
 def initialization
@@ -11,7 +11,7 @@ def initialization
 	
 	@@POPULATION_SIZE.times do
 		#using blocks, we generate random letters for a string
-		solution = (0...100).map{ ('a'..'z').to_a[rand(26)] }.join
+		solution = (0...@@GENETIC_SIZE).map{ ('a'..'z').to_a[rand(26)] }.join
 		@population.push solution
 	end
 
@@ -43,13 +43,26 @@ def tournament_selection (population_pool)
 	best_solution
 end
 
-# Take two strings, and breed them to create two new solutions
+# Take two strings, and breed them to create two new solutions (Crossover)
 def breed(solution_one, solution_two)
 	# We choose a pivot point, splice the two solutions and rejoin them to the corresponding
 	# side of the other solution
-	pivot = solution_one.length * rand
-	new_solution_one = solution_one[0...pivot] + solution_two[pivot..-1]
-	new_solution_two = solution_two[0...pivot] + solution_one[pivot..-1]
+	pivot1 = solution_one.length * rand
+	pivot2 = solution_one.length * rand
+	if(pivot1 == pivot2)
+		new_solution_one = solution_one[0...pivot1] + solution_two[pivot1..-1]
+		new_solution_two = solution_two[0...pivot1] + solution_one[pivot1..-1]
+	else
+		if (pivot1 > pivot2)
+			min_pivot = pivot2
+			max_pivot = pivot1
+		else
+			min_pivot = pivot1
+			max_pivot = pivot2
+		end
+		new_solution_one = solution_one[0...min_pivot] + solution_two[min_pivot..max_pivot] + solution_one[max_pivot...-1]
+		new_solution_two = solution_two[0...min_pivot] + solution_one[min_pivot..max_pivot] + solution_two[max_pivot...-1]
+	end
 	
 	return new_solution_one, new_solution_two
 
@@ -70,7 +83,7 @@ def start
 	# Number of generations
 	#@@GENERATIONS.times do | generation |
 	generation = 0
-	while @best_solution_score != 100
+	while @best_solution_score != @@GENETIC_SIZE
 		generation+=1
 		local_best_solution = nil
 		local_best_solution_score = -1
